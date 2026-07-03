@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm -v)",
+      "Bash(sw_vers)",
+      "Bash(xcode-select -p)"
+    ]
+  }
+}
