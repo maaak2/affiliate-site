@@ -1,0 +1,38 @@
+{
+  "nav": {
+    "siteName": "Mahmoud Tries",
+    "categories": "Categories",
+    "about": "About Me"
+  },
+  "home": {
+    "heading": "Latest Reviews",
+    "subheading": "Honest, hands-on reviews of hotels, products, and services.",
+    "readMore": "Read full review",
+    "noReviews": "No reviews yet. Check back soon."
+  },
+  "categories": {
+    "heading": "Categories"
+  },
+  "about": {
+    "heading": "About Me",
+    "bio": "Hi, I'm Mahmoud. I test and review products, hotels, and services I actually use, and share honest, hands-on write-ups so you don't have to guess. This bio is a placeholder — real content coming soon.",
+    "contact": "Contact",
+    "contactEmail": "info@mahmoudtries.com"
+  },
+  "review": {
+    "pros": "Pros",
+    "cons": "Cons",
+    "rating": "Rating",
+    "checkPrice": "Check price",
+    "publishedOn": "Published on",
+    "backToHome": "Back to all reviews",
+    "promoCode": "Promo code"
+  },
+  "footer": {
+    "text": "This site may earn a commission from links on this page."
+  },
+  "languageSwitcher": {
+    "en": "English",
+    "ar": "العربية"
+  }
+}

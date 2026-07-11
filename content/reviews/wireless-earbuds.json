@@ -1,0 +1,32 @@
+{
+  "slug": "wireless-earbuds",
+  "categorySlug": "electronics",
+  "rating": 4,
+  "price": { "amount": 249, "currency": "SAR" },
+  "promoCode": "TECH15",
+  "media": [
+    { "type": "photo", "url": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=1200&q=80" },
+    { "type": "video", "url": "https://www.w3schools.com/html/mov_bbb.mp4" }
+  ],
+  "affiliateLinks": [
+    { "label": "Amazon", "url": "https://example.com/buy/wireless-earbuds-amazon" },
+    { "label": "Noon", "url": "https://example.com/buy/wireless-earbuds-noon" }
+  ],
+  "publishedAt": "2026-06-20",
+  "translations": {
+    "en": {
+      "title": "AeroBuds Pro Wireless Earbuds",
+      "summary": "Solid noise cancellation and battery life for the price, though the case feels a bit cheap.",
+      "body": "I have been using the AeroBuds Pro daily for about a month, mostly for calls and commuting. Noise cancellation handles traffic and office chatter well, and I consistently get close to the advertised 6 hours per charge.\n\nPairing is fast and they reconnect reliably to my phone after being in the case. The touch controls took a few days to get used to but are fine now.\n\nThe charging case feels a little plasticky and picks up scratches easily, which is the one thing keeping this from a full recommendation.",
+      "pros": ["Strong noise cancellation for the price", "Reliable reconnect", "Long battery life"],
+      "cons": ["Charging case feels cheap", "Touch controls need a short learning curve"]
+    },
+    "ar": {
+      "title": "سماعات إيروبَدز برو اللاسلكية",
+      "summary": "إلغاء ضوضاء جيد وعمر بطارية طويل مقابل السعر، لكن العلبة تبدو رخيصة بعض الشيء.",
+      "body": "أستخدم سماعات إيروبَدز برو يوميًا منذ نحو شهر، غالبًا للمكالمات والتنقل. إلغاء الضوضاء يتعامل بشكل جيد مع ضجيج المرور والمكتب، وأحصل باستمرار على ما يقارب 6 ساعات لكل شحنة كما هو معلن.\n\nالاقتران سريع وتعيد الاتصال بهاتفي بشكل موثوق بعد إخراجها من العلبة. أخذت أزرار اللمس بضعة أيام للتعوّد عليها لكنها أصبحت مريحة الآن.\n\nعلبة الشحن تبدو بلاستيكية بعض الشيء وتلتقط الخدوش بسهولة، وهذا هو الأمر الوحيد الذي يمنعها من توصية كاملة.",
+      "pros": ["إلغاء ضوضاء قوي مقابل السعر", "إعادة اتصال موثوقة", "عمر بطارية طويل"],
+      "cons": ["علبة الشحن تبدو رخيصة", "أزرار اللمس تحتاج فترة تعوّد قصيرة"]
+    }
+  }
+}

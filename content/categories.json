@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "hotels",
+    "schemaType": "Hotel",
+    "translations": {
+      "en": {
+        "name": "Hotels"
+      },
+      "ar": {
+        "name": "الفنادق"
+      }
+    }
+  },
+  {
+    "slug": "electronics",
+    "schemaType": "Product",
+    "translations": {
+      "en": {
+        "name": "YES"
+      },
+      "ar": {
+        "name": "نعم"
+      }
+    }
+  },
+  {
+    "slug": "services",
+    "schemaType": "Service",
+    "translations": {
+      "en": {
+        "name": "Services"
+      },
+      "ar": {
+        "name": "خدمات"
+      }
+    }
+  },
+  {
+    "slug": "home-goods",
+    "schemaType": "Product",
+    "translations": {
+      "en": {
+        "name": "Home Goods"
+      },
+      "ar": {
+        "name": "مستلزمات المنزل"
+      }
+    }
+  }
+]

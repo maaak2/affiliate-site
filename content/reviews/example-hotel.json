@@ -1,0 +1,74 @@
+{
+  "slug": "example-hotel",
+  "categorySlug": "hotels",
+  "tags": [
+    "family"
+  ],
+  "rating": 4.5,
+  "price": {
+    "amount": 450,
+    "currency": "SAR"
+  },
+  "media": [
+    {
+      "type": "photo",
+      "url": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80"
+    }
+  ],
+  "affiliateLinks": [
+    {
+      "label": "Book on Booking.com",
+      "url": "https://example.com/book/example-hotel"
+    }
+  ],
+  "publishedAt": "2026-07-03",
+  "translations": {
+    "en": {
+      "title": "Seaside Grand Hotel",
+      "summary": "A relaxed beachfront hotel with excellent breakfast and friendly staff.",
+      "body": "We spent four nights at the Seaside Grand Hotel and came away impressed. The rooms are spacious, the beds are comfortable, and the balcony views of the water are hard to beat.\n\nBreakfast is included and easily the best part of the stay — a huge spread of fresh fruit, pastries, and made-to-order eggs. Staff were consistently helpful, from early check-in to late-night questions about local restaurants.\n\nThe only downside was slow elevator service during peak morning hours. Otherwise, this is an easy recommendation for anyone visiting the area.",
+      "pros": [
+        "Steps from the beach",
+        "Excellent breakfast",
+        "Friendly, responsive staff"
+      ],
+      "cons": [
+        "Elevators get slow at peak times",
+        "Parking costs extra"
+      ]
+    },
+    "ar": {
+      "title": "فندق سي سايد جراند",
+      "summary": "فندق مريح على الشاطئ بإفطار ممتاز وطاقم عمل ودود.",
+      "body": "قضينا أربع ليالٍ في فندق سي سايد جراند وخرجنا معجبين. الغرف واسعة، والأسرّة مريحة، وإطلالة الشرفة على الماء لا تُضاهى.\n\nالإفطار مشمول في السعر وهو أفضل جزء في الإقامة — تشكيلة كبيرة من الفواكه الطازجة والمعجنات والبيض المُحضّر حسب الطلب. كان الطاقم متعاونًا باستمرار، من تسجيل الوصول المبكر إلى الأسئلة المتأخرة حول المطاعم المحلية.\n\nالعيب الوحيد كان بطء المصاعد في أوقات الذروة الصباحية. بخلاف ذلك، هذه توصية سهلة لأي شخص يزور المنطقة.",
+      "pros": [
+        "على بعد خطوات من الشاطئ",
+        "إفطار ممتاز",
+        "طاقم عمل ودود وسريع الاستجابة"
+      ],
+      "cons": [
+        "المصاعد بطيئة في أوقات الذروة",
+        "مواقف السيارات برسوم إضافية"
+      ]
+    }
+  },
+  "seo": {
+    "metaTitle": {
+      "en": "",
+      "ar": ""
+    },
+    "metaDescription": {
+      "en": "",
+      "ar": ""
+    },
+    "targetKeywords": "",
+    "socialTitle": {
+      "en": "",
+      "ar": ""
+    },
+    "socialDescription": {
+      "en": "",
+      "ar": ""
+    }
+  }
+}
