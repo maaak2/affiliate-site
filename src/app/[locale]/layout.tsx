@@ -7,6 +7,7 @@ import { Geist, Cairo } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AnalyticsNotice from "@/components/AnalyticsNotice";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -75,6 +76,7 @@ export default async function LocaleLayout({
           />
         )}
         <NextIntlClientProvider locale={locale} messages={messages}>
+          <AnalyticsNotice />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />

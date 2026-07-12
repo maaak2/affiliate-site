@@ -29,10 +29,48 @@
     "promoCode": "Promo code"
   },
   "footer": {
-    "text": "This site may earn a commission from links on this page."
+    "text": "This site may earn a commission from links on this page.",
+    "privacyLink": "Privacy Policy",
+    "affiliateLink": "Affiliate Disclosure"
   },
   "languageSwitcher": {
     "en": "English",
     "ar": "العربية"
+  },
+  "legal": {
+    "draftNotice": "Draft placeholder text for structure and drafting purposes only. This has not been reviewed by a lawyer and should not be relied on until it has been."
+  },
+  "privacy": {
+    "heading": "Privacy Policy",
+    "whoWeAreHeading": "Who we are",
+    "whoWeAreBody": "Mahmoud Tries (mahmoudtries.com) is operated by Mahmoud. If you have any questions about this policy or how information is handled on this site, contact info@mahmoudtries.com.",
+    "dataCollectedHeading": "Information we collect",
+    "dataCollectedBody": "We use Umami, a privacy-focused analytics tool, to understand overall site traffic — for example, which pages are visited and which reviews are popular. Umami is cookieless: it does not use cookies, does not track visitors across other websites, and does not store IP addresses or any other personally identifiable information. We do not collect names, email addresses, or any other personal data through your use of this site.",
+    "thirdPartiesHeading": "Third-party services",
+    "thirdPartiesIntro": "We use the following third-party services to run this site:",
+    "thirdPartyUmami": "Umami — anonymized, cookieless website analytics.",
+    "thirdPartyNetlify": "Netlify — website hosting and infrastructure.",
+    "thirdPartiesOutro": "These providers may process limited technical data as part of delivering their services to us, but we do not share personal data with them because we do not collect any.",
+    "accountsHeading": "Accounts and forms",
+    "accountsBody": "This site does not offer visitor accounts, comments, newsletter sign-ups, or any other forms that collect personal information. You can read reviews without submitting any personal data.",
+    "marketingHeading": "Marketing communications",
+    "marketingBody": "We do not send marketing emails, newsletters, or any other communications, because we do not collect contact information from visitors in the first place.",
+    "affiliateHeading": "Affiliate links",
+    "affiliateBody": "Some pages contain affiliate links. See our",
+    "affiliateLinkText": "Affiliate Disclosure",
+    "contactHeading": "Your rights and contact",
+    "contactBody": "If you have any questions about this policy, or a request related to your data, contact us and we'll get back to you."
+  },
+  "affiliateDisclosure": {
+    "heading": "Affiliate Disclosure",
+    "body1": "Mahmoud Tries participates in affiliate marketing programs. This means some of the links to products, hotels, and services on this site are affiliate links.",
+    "body2": "If you click one of these links and make a qualifying purchase or booking, we may earn a commission from the retailer or platform — at no extra cost to you. The price you pay is the same whether or not you use our link.",
+    "body3": "We only recommend products, hotels, and services we have personally used and reviewed honestly. Whether a link earns a commission never influences our opinion of the item being reviewed — our ratings and written reviews reflect our genuine experience.",
+    "body4": "If you have any questions about this disclosure, contact us."
+  },
+  "analyticsNotice": {
+    "message": "This site uses anonymized, cookieless analytics to understand overall traffic — no personal data is collected.",
+    "linkText": "Learn more",
+    "dismiss": "Dismiss"
   }
 }
