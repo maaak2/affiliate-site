@@ -38,32 +38,36 @@ export default function CategoriesAdmin({
     setAdding(true);
     setError(null);
 
-    const res = await fetch("/api/categories", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nameEn: newNameEn, nameAr: newNameAr }),
-    });
-    const data = await res.json().catch(() => ({}));
+    try {
+      const res = await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nameEn: newNameEn, nameAr: newNameAr }),
+      });
+      const data = await res.json().catch(() => ({}));
 
-    if (!res.ok) {
-      setError(data.error ?? "Failed to add category.");
+      if (!res.ok) {
+        setError(data.error ?? "Failed to add category.");
+        return;
+      }
+
+      setCategories((prev) => [
+        ...prev,
+        {
+          slug: data.slug,
+          nameEn: data.translations.en.name,
+          nameAr: data.translations.ar.name,
+          reviewCount: 0,
+        },
+      ]);
+      setNewNameEn("");
+      setNewNameAr("");
+      router.refresh();
+    } catch {
+      setError("Failed to add category — check your connection and try again.");
+    } finally {
       setAdding(false);
-      return;
     }
-
-    setCategories((prev) => [
-      ...prev,
-      {
-        slug: data.slug,
-        nameEn: data.translations.en.name,
-        nameAr: data.translations.ar.name,
-        reviewCount: 0,
-      },
-    ]);
-    setNewNameEn("");
-    setNewNameAr("");
-    setAdding(false);
-    router.refresh();
   }
 
   function startEdit(category: CategoryRow) {
@@ -81,29 +85,33 @@ export default function CategoriesAdmin({
     setSavingEdit(true);
     setError(null);
 
-    const res = await fetch(`/api/categories/${slug}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nameEn: editNameEn, nameAr: editNameAr }),
-    });
-    const data = await res.json().catch(() => ({}));
+    try {
+      const res = await fetch(`/api/categories/${slug}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nameEn: editNameEn, nameAr: editNameAr }),
+      });
+      const data = await res.json().catch(() => ({}));
 
-    if (!res.ok) {
-      setError(data.error ?? "Failed to update category.");
+      if (!res.ok) {
+        setError(data.error ?? "Failed to update category.");
+        return;
+      }
+
+      setCategories((prev) =>
+        prev.map((category) =>
+          category.slug === slug
+            ? { ...category, nameEn: data.translations.en.name, nameAr: data.translations.ar.name }
+            : category
+        )
+      );
+      setEditingSlug(null);
+      router.refresh();
+    } catch {
+      setError("Failed to update category — check your connection and try again.");
+    } finally {
       setSavingEdit(false);
-      return;
     }
-
-    setCategories((prev) =>
-      prev.map((category) =>
-        category.slug === slug
-          ? { ...category, nameEn: data.translations.en.name, nameAr: data.translations.ar.name }
-          : category
-      )
-    );
-    setEditingSlug(null);
-    setSavingEdit(false);
-    router.refresh();
   }
 
   async function handleDelete(category: CategoryRow) {
@@ -113,38 +121,46 @@ export default function CategoriesAdmin({
     setDeletingSlug(category.slug);
     setError(null);
 
-    const res = await fetch(`/api/categories/${category.slug}`, { method: "DELETE" });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Failed to delete category.");
-      setDeletingSlug(null);
-      return;
-    }
+    try {
+      const res = await fetch(`/api/categories/${category.slug}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Failed to delete category.");
+        return;
+      }
 
-    setCategories((prev) => prev.filter((c) => c.slug !== category.slug));
-    setDeletingSlug(null);
-    router.refresh();
+      setCategories((prev) => prev.filter((c) => c.slug !== category.slug));
+      router.refresh();
+    } catch {
+      setError("Failed to delete category — check your connection and try again.");
+    } finally {
+      setDeletingSlug(null);
+    }
   }
 
   async function persistOrder(next: CategoryRow[]) {
     setReordering(true);
     setError(null);
 
-    const res = await fetch("/api/categories/reorder", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ order: next.map((c) => c.slug) }),
-    });
+    try {
+      const res = await fetch("/api/categories/reorder", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order: next.map((c) => c.slug) }),
+      });
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Failed to reorder categories.");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Failed to reorder categories.");
+        return;
+      }
+
+      router.refresh();
+    } catch {
+      setError("Failed to reorder categories — check your connection and try again.");
+    } finally {
       setReordering(false);
-      return;
     }
-
-    setReordering(false);
-    router.refresh();
   }
 
   function move(index: number, direction: -1 | 1) {

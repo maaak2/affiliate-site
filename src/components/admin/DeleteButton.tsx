@@ -10,11 +10,17 @@ export default function DeleteButton({ slug }: { slug: string }) {
   async function handleDelete() {
     if (!confirm(`Delete "${slug}"? This cannot be undone.`)) return;
     setDeleting(true);
-    const res = await fetch(`/api/reviews/${slug}`, { method: "DELETE" });
-    if (res.ok) {
-      router.refresh();
-    } else {
-      alert("Failed to delete review.");
+    try {
+      const res = await fetch(`/api/reviews/${slug}`, { method: "DELETE" });
+      if (res.ok) {
+        router.refresh();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error ?? "Failed to delete review.");
+        setDeleting(false);
+      }
+    } catch {
+      alert("Failed to delete review — check your connection and try again.");
       setDeleting(false);
     }
   }

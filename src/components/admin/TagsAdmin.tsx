@@ -33,32 +33,36 @@ export default function TagsAdmin({ initialTags }: { initialTags: TagRow[] }) {
     setAdding(true);
     setError(null);
 
-    const res = await fetch("/api/tags", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nameEn: newNameEn, nameAr: newNameAr }),
-    });
-    const data = await res.json().catch(() => ({}));
+    try {
+      const res = await fetch("/api/tags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nameEn: newNameEn, nameAr: newNameAr }),
+      });
+      const data = await res.json().catch(() => ({}));
 
-    if (!res.ok) {
-      setError(data.error ?? "Failed to add tag.");
+      if (!res.ok) {
+        setError(data.error ?? "Failed to add tag.");
+        return;
+      }
+
+      setTags((prev) => [
+        ...prev,
+        {
+          slug: data.slug,
+          nameEn: data.translations.en.name,
+          nameAr: data.translations.ar.name,
+          reviewCount: 0,
+        },
+      ]);
+      setNewNameEn("");
+      setNewNameAr("");
+      router.refresh();
+    } catch {
+      setError("Failed to add tag — check your connection and try again.");
+    } finally {
       setAdding(false);
-      return;
     }
-
-    setTags((prev) => [
-      ...prev,
-      {
-        slug: data.slug,
-        nameEn: data.translations.en.name,
-        nameAr: data.translations.ar.name,
-        reviewCount: 0,
-      },
-    ]);
-    setNewNameEn("");
-    setNewNameAr("");
-    setAdding(false);
-    router.refresh();
   }
 
   function startEdit(tag: TagRow) {
@@ -76,29 +80,33 @@ export default function TagsAdmin({ initialTags }: { initialTags: TagRow[] }) {
     setSavingEdit(true);
     setError(null);
 
-    const res = await fetch(`/api/tags/${slug}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nameEn: editNameEn, nameAr: editNameAr }),
-    });
-    const data = await res.json().catch(() => ({}));
+    try {
+      const res = await fetch(`/api/tags/${slug}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nameEn: editNameEn, nameAr: editNameAr }),
+      });
+      const data = await res.json().catch(() => ({}));
 
-    if (!res.ok) {
-      setError(data.error ?? "Failed to update tag.");
+      if (!res.ok) {
+        setError(data.error ?? "Failed to update tag.");
+        return;
+      }
+
+      setTags((prev) =>
+        prev.map((tag) =>
+          tag.slug === slug
+            ? { ...tag, nameEn: data.translations.en.name, nameAr: data.translations.ar.name }
+            : tag
+        )
+      );
+      setEditingSlug(null);
+      router.refresh();
+    } catch {
+      setError("Failed to update tag — check your connection and try again.");
+    } finally {
       setSavingEdit(false);
-      return;
     }
-
-    setTags((prev) =>
-      prev.map((tag) =>
-        tag.slug === slug
-          ? { ...tag, nameEn: data.translations.en.name, nameAr: data.translations.ar.name }
-          : tag
-      )
-    );
-    setEditingSlug(null);
-    setSavingEdit(false);
-    router.refresh();
   }
 
   async function handleDelete(tag: TagRow) {
@@ -108,17 +116,21 @@ export default function TagsAdmin({ initialTags }: { initialTags: TagRow[] }) {
     setDeletingSlug(tag.slug);
     setError(null);
 
-    const res = await fetch(`/api/tags/${tag.slug}`, { method: "DELETE" });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Failed to delete tag.");
-      setDeletingSlug(null);
-      return;
-    }
+    try {
+      const res = await fetch(`/api/tags/${tag.slug}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Failed to delete tag.");
+        return;
+      }
 
-    setTags((prev) => prev.filter((t) => t.slug !== tag.slug));
-    setDeletingSlug(null);
-    router.refresh();
+      setTags((prev) => prev.filter((t) => t.slug !== tag.slug));
+      router.refresh();
+    } catch {
+      setError("Failed to delete tag — check your connection and try again.");
+    } finally {
+      setDeletingSlug(null);
+    }
   }
 
   return (

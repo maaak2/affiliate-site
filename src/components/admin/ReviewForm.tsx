@@ -188,24 +188,28 @@ export default function ReviewForm({
     setAddingTag(true);
     setTagError(null);
 
-    const res = await fetch("/api/tags", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nameEn: newTagNameEn, nameAr: newTagNameAr }),
-    });
-    const data = await res.json().catch(() => ({}));
+    try {
+      const res = await fetch("/api/tags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nameEn: newTagNameEn, nameAr: newTagNameAr }),
+      });
+      const data = await res.json().catch(() => ({}));
 
-    if (!res.ok) {
-      setTagError(data.error ?? "Failed to add tag.");
+      if (!res.ok) {
+        setTagError(data.error ?? "Failed to add tag.");
+        return;
+      }
+
+      setAvailableTags((prev) => [...prev, data]);
+      setForm((prev) => ({ ...prev, tagSlugs: [...prev.tagSlugs, data.slug] }));
+      setNewTagNameEn("");
+      setNewTagNameAr("");
+    } catch {
+      setTagError("Failed to add tag — check your connection and try again.");
+    } finally {
       setAddingTag(false);
-      return;
     }
-
-    setAvailableTags((prev) => [...prev, data]);
-    setForm((prev) => ({ ...prev, tagSlugs: [...prev.tagSlugs, data.slug] }));
-    setNewTagNameEn("");
-    setNewTagNameAr("");
-    setAddingTag(false);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -257,21 +261,26 @@ export default function ReviewForm({
     const url = isEditing ? `/api/reviews/${initialReview!.slug}` : "/api/reviews";
     const method = isEditing ? "PUT" : "POST";
 
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Something went wrong.");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Something went wrong.");
+        return;
+      }
+
+      router.push(adminHref());
+      router.refresh();
+    } catch {
+      setError("Failed to save review — check your connection and try again.");
+    } finally {
       setSubmitting(false);
-      return;
     }
-
-    router.push(adminHref());
-    router.refresh();
   }
 
   if (categories.length === 0) {

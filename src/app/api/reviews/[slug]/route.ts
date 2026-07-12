@@ -52,6 +52,13 @@ export async function DELETE(
   }
 
   const { slug } = await params;
-  await deleteReview(slug);
-  return NextResponse.json({ ok: true });
+  try {
+    await deleteReview(slug);
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Failed to delete review." },
+      { status: 400 }
+    );
+  }
 }

@@ -276,5 +276,12 @@ export async function deleteReview(slug: string): Promise<void> {
   if (!isValidSlug(slug)) {
     throw new Error("Invalid slug.");
   }
-  await fs.unlink(filePathForSlug(slug)).catch(() => undefined);
+  try {
+    await fs.unlink(filePathForSlug(slug));
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      return; // Already gone — deleting is idempotent.
+    }
+    throw error;
+  }
 }
