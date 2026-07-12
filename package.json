@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "netlify dev --offline",
+    "dev:next-only": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@netlify/blobs": "^10.7.9",
     "next": "16.2.10",
     "next-intl": "^4.13.1",
     "react": "19.2.4",
@@ -21,10 +23,13 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "netlify-cli": "^26.2.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
   "overrides": {
-    "postcss": "8.5.16"
+    "postcss": "8.5.16",
+    "@opentelemetry/core": "2.9.0",
+    "esbuild": "0.28.1"
   }
 }

@@ -3,20 +3,13 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link, getPathname } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
-import { getAllSlugs, getReview } from "@/lib/reviews";
+import { getReview } from "@/lib/reviews";
 import { getCategory, getCategoryName } from "@/lib/categories";
 import { listTags, getTagName } from "@/lib/tags";
 import AffiliateLink from "@/components/AffiliateLink";
 import ReviewViewTracker from "@/components/ReviewViewTracker";
 
 export const dynamic = "force-dynamic";
-
-export async function generateStaticParams() {
-  const slugs = await getAllSlugs();
-  return routing.locales.flatMap((locale) =>
-    slugs.map((slug) => ({ locale, slug }))
-  );
-}
 
 export async function generateMetadata({
   params,

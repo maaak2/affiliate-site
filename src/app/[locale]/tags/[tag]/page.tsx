@@ -1,20 +1,13 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { getTag, getTagName, listTags } from "@/lib/tags";
+import { getTag, getTagName } from "@/lib/tags";
 import { listReviewsByTag } from "@/lib/reviews";
 import { listCategories, getCategoryName } from "@/lib/categories";
 import ReviewCard from "@/components/ReviewCard";
-import { routing, type Locale } from "@/i18n/routing";
+import type { Locale } from "@/i18n/routing";
 
 export const dynamic = "force-dynamic";
-
-export async function generateStaticParams() {
-  const tags = await listTags();
-  return routing.locales.flatMap((locale) =>
-    tags.map((tag) => ({ locale, tag: tag.slug }))
-  );
-}
 
 export async function generateMetadata({
   params,

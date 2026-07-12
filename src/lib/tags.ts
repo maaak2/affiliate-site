@@ -1,6 +1,5 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { isValidSlug, slugify } from "./slug";
+import { getContentStore } from "./contentStore";
 
 export interface TagTranslation {
   name: string;
@@ -14,15 +13,12 @@ export interface Tag {
   };
 }
 
-const TAGS_FILE = path.join(process.cwd(), "content", "tags.json");
+const TAGS_KEY = "tags.json";
 
 export async function listTags(): Promise<Tag[]> {
-  const raw = await fs.readFile(TAGS_FILE, "utf-8").catch(() => "[]");
-  try {
-    return JSON.parse(raw) as Tag[];
-  } catch {
-    return [];
-  }
+  const store = getContentStore();
+  const tags = await store.get(TAGS_KEY, { type: "json" });
+  return Array.isArray(tags) ? (tags as Tag[]) : [];
 }
 
 export async function getTag(slug: string): Promise<Tag | null> {
@@ -36,8 +32,8 @@ export function getTagName(tag: Tag, locale: "en" | "ar"): string {
 }
 
 async function writeTags(tags: Tag[]): Promise<void> {
-  await fs.mkdir(path.dirname(TAGS_FILE), { recursive: true });
-  await fs.writeFile(TAGS_FILE, JSON.stringify(tags, null, 2), "utf-8");
+  const store = getContentStore();
+  await store.setJSON(TAGS_KEY, tags);
 }
 
 function normalizeNames(input: { nameEn?: string; nameAr?: string }): {

@@ -1,8 +1,7 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { isValidSlug } from "./slug";
 import { getCategory } from "./categories";
 import { getTag } from "./tags";
+import { getContentStore } from "./contentStore";
 import { CURRENCIES, type Currency } from "./currency";
 
 export type { Currency } from "./currency";
@@ -68,15 +67,15 @@ export interface Review {
   seo: ReviewSeo;
 }
 
-const CONTENT_DIR = path.join(process.cwd(), "content", "reviews");
+const REVIEWS_PREFIX = "reviews/";
 
 export { isValidSlug, slugify } from "./slug";
 
-function filePathForSlug(slug: string): string {
+function reviewKeyForSlug(slug: string): string {
   if (!isValidSlug(slug)) {
     throw new Error(`Invalid slug: ${slug}`);
   }
-  return path.join(CONTENT_DIR, `${slug}.json`);
+  return `${REVIEWS_PREFIX}${slug}.json`;
 }
 
 function normalizeTranslation(t: Partial<ReviewTranslation> | undefined): ReviewTranslation {
@@ -206,10 +205,12 @@ async function normalizeAndValidateReview(input: Partial<Review>): Promise<Revie
 }
 
 export async function getAllSlugs(): Promise<string[]> {
-  const files = await fs.readdir(CONTENT_DIR).catch(() => []);
-  return files
-    .filter((file) => file.endsWith(".json"))
-    .map((file) => file.replace(/\.json$/, ""));
+  const store = getContentStore();
+  const { blobs } = await store.list({ prefix: REVIEWS_PREFIX });
+  return blobs
+    .map((blob) => blob.key.slice(REVIEWS_PREFIX.length))
+    .filter((key) => key.endsWith(".json"))
+    .map((key) => key.replace(/\.json$/, ""));
 }
 
 export async function listReviews(): Promise<Review[]> {
@@ -232,12 +233,10 @@ export async function listReviewsByTag(tagSlug: string): Promise<Review[]> {
 
 export async function getReview(slug: string): Promise<Review | null> {
   if (!isValidSlug(slug)) return null;
-  try {
-    const raw = await fs.readFile(filePathForSlug(slug), "utf-8");
-    return withNewFieldDefaults(JSON.parse(raw) as Review);
-  } catch {
-    return null;
-  }
+  const store = getContentStore();
+  const review = await store.get(reviewKeyForSlug(slug), { type: "json" });
+  if (!review) return null;
+  return withNewFieldDefaults(review as Review);
 }
 
 export async function createReview(input: Partial<Review>): Promise<void> {
@@ -246,8 +245,8 @@ export async function createReview(input: Partial<Review>): Promise<void> {
   if (existing) {
     throw new Error(`A review with slug "${review.slug}" already exists.`);
   }
-  await fs.mkdir(CONTENT_DIR, { recursive: true });
-  await fs.writeFile(filePathForSlug(review.slug), JSON.stringify(review, null, 2), "utf-8");
+  const store = getContentStore();
+  await store.setJSON(reviewKeyForSlug(review.slug), review);
 }
 
 export async function updateReview(
@@ -262,26 +261,22 @@ export async function updateReview(
   if (!existing) {
     throw new Error(`No review found with slug "${originalSlug}".`);
   }
+  const store = getContentStore();
   if (review.slug !== originalSlug) {
     const collision = await getReview(review.slug);
     if (collision) {
       throw new Error(`A review with slug "${review.slug}" already exists.`);
     }
-    await fs.unlink(filePathForSlug(originalSlug));
+    await store.delete(reviewKeyForSlug(originalSlug));
   }
-  await fs.writeFile(filePathForSlug(review.slug), JSON.stringify(review, null, 2), "utf-8");
+  await store.setJSON(reviewKeyForSlug(review.slug), review);
 }
 
 export async function deleteReview(slug: string): Promise<void> {
   if (!isValidSlug(slug)) {
     throw new Error("Invalid slug.");
   }
-  try {
-    await fs.unlink(filePathForSlug(slug));
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-      return; // Already gone — deleting is idempotent.
-    }
-    throw error;
-  }
+  const store = getContentStore();
+  // Netlify Blobs' delete() is already idempotent — a no-op if the key doesn't exist.
+  await store.delete(reviewKeyForSlug(slug));
 }

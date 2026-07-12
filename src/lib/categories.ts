@@ -1,6 +1,5 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { isValidSlug, slugify } from "./slug";
+import { getContentStore } from "./contentStore";
 
 // The schema.org type used for this category's items in JSON-LD (itemReviewed).
 export type SchemaOrgType = "Product" | "Hotel" | "Service";
@@ -18,15 +17,12 @@ export interface Category {
   };
 }
 
-const CATEGORIES_FILE = path.join(process.cwd(), "content", "categories.json");
+const CATEGORIES_KEY = "categories.json";
 
 export async function listCategories(): Promise<Category[]> {
-  const raw = await fs.readFile(CATEGORIES_FILE, "utf-8").catch(() => "[]");
-  try {
-    return JSON.parse(raw) as Category[];
-  } catch {
-    return [];
-  }
+  const store = getContentStore();
+  const categories = await store.get(CATEGORIES_KEY, { type: "json" });
+  return Array.isArray(categories) ? (categories as Category[]) : [];
 }
 
 export async function getCategory(slug: string): Promise<Category | null> {
@@ -40,8 +36,8 @@ export function getCategoryName(category: Category, locale: "en" | "ar"): string
 }
 
 async function writeCategories(categories: Category[]): Promise<void> {
-  await fs.mkdir(path.dirname(CATEGORIES_FILE), { recursive: true });
-  await fs.writeFile(CATEGORIES_FILE, JSON.stringify(categories, null, 2), "utf-8");
+  const store = getContentStore();
+  await store.setJSON(CATEGORIES_KEY, categories);
 }
 
 function normalizeNames(input: { nameEn?: string; nameAr?: string }): {
@@ -108,7 +104,8 @@ export async function deleteCategory(slug: string): Promise<void> {
   }
 }
 
-/** Rewrites categories.json in the given slug order. The file order is what drives display order across the site. */
+/** Rewrites categories in the given slug order. Store order is what drives display order
+ * across the site. */
 export async function reorderCategories(orderedSlugs: string[]): Promise<Category[]> {
   const categories = await listCategories();
   const isSameSet =
