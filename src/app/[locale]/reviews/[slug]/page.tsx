@@ -6,6 +6,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { getReview } from "@/lib/reviews";
 import { getCategory, getCategoryName } from "@/lib/categories";
 import { listTags, getTagName } from "@/lib/tags";
+import { buildReviewJsonLd } from "@/lib/structuredData";
 import AffiliateLink from "@/components/AffiliateLink";
 import ReviewViewTracker from "@/components/ReviewViewTracker";
 
@@ -83,39 +84,8 @@ export default async function ReviewPage({
     review.translations[locale as Locale] ?? review.translations.en;
   const t = await getTranslations("review");
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const thumbnail = review.media.find((item) => item.type === "photo");
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Review",
-    itemReviewed: {
-      "@type": category?.schemaType ?? "Product",
-      name: translation.title,
-      image: thumbnail?.url,
-      offers: review.affiliateLinks.map((link) => ({
-        "@type": "Offer",
-        url: link.url,
-        price: review.price.amount,
-        priceCurrency: review.price.currency,
-      })),
-    },
-    reviewRating: {
-      "@type": "Rating",
-      ratingValue: review.rating,
-      bestRating: 5,
-      worstRating: 0,
-    },
-    author: {
-      "@type": "Organization",
-      name: locale === "ar" ? "تجارب محمود" : "Mahmoud Tries",
-    },
-    datePublished: review.publishedAt,
-    reviewBody: translation.summary,
-    url: `${siteUrl}${getPathname({
-      locale: locale as Locale,
-      href: `/reviews/${slug}`,
-    })}`,
-  };
+  const jsonLd = buildReviewJsonLd(review, category, locale as Locale, siteUrl);
 
   const paragraphs = translation.body.split(/\n\s*\n/).filter(Boolean);
 

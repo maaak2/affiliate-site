@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getCategory, getCategoryName } from "@/lib/categories";
 import { listReviewsByCategory } from "@/lib/reviews";
+import { getSeoSettings, renderCategoryTemplate } from "@/lib/seoSettings";
 import ReviewCard from "@/components/ReviewCard";
 import type { Locale } from "@/i18n/routing";
 
@@ -16,7 +17,25 @@ export async function generateMetadata({
   const { locale, category: categorySlug } = await params;
   const category = await getCategory(categorySlug);
   if (!category) return {};
-  return { title: getCategoryName(category, locale as Locale) };
+
+  const loc = locale as Locale;
+  const categoryName = getCategoryName(category, loc);
+  const settings = await getSeoSettings();
+  const titleTemplate = settings.categoryMetaTitleTemplate[loc]?.trim();
+  const descriptionTemplate = settings.categoryMetaDescriptionTemplate[loc]?.trim();
+
+  return {
+    // A custom template is "absolute" (exact, not wrapped by the root layout's title template)
+    // since the admin-provided text is meant to be the complete title. With no template set,
+    // the bare category name keeps the existing "Hotels | Mahmoud Tries" suffixed behavior.
+    title: titleTemplate ? { absolute: renderCategoryTemplate(titleTemplate, categoryName) } : categoryName,
+    // Omitting the key entirely when unset (rather than `description: undefined`) — Next.js
+    // treats an explicit undefined as "clear this," not "inherit," which would otherwise erase
+    // the parent layout's default description on every category page.
+    ...(descriptionTemplate
+      ? { description: renderCategoryTemplate(descriptionTemplate, categoryName) }
+      : {}),
+  };
 }
 
 export default async function CategoryPage({

@@ -1,12 +1,36 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { listReviews } from "@/lib/reviews";
 import { listCategories, getCategoryName } from "@/lib/categories";
+import { getSeoSettings } from "@/lib/seoSettings";
 import ReviewCard from "@/components/ReviewCard";
 import type { Locale } from "@/i18n/routing";
 
 // Always read the content folder fresh so reviews added via /admin show up
 // immediately, instead of only after a rebuild.
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const settings = await getSeoSettings();
+  const loc = locale as Locale;
+  const title = settings.homepageMetaTitle[loc]?.trim();
+  const description = settings.homepageMetaDescription[loc]?.trim();
+
+  // Omit unset keys entirely rather than setting them to undefined — Next.js treats an
+  // explicit `title: undefined` as "clear this," not "inherit the parent layout's title,"
+  // which otherwise wipes out the site default when no override is configured.
+  return {
+    // "absolute" so this doesn't get wrapped by the root layout's "%s | Mahmoud Tries" template
+    // — an admin-provided title is meant to be the exact, complete title.
+    ...(title ? { title: { absolute: title } } : {}),
+    ...(description ? { description } : {}),
+  };
+}
 
 export default async function HomePage({
   params,

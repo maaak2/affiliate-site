@@ -5,6 +5,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { Geist, Cairo } from "next/font/google";
 import { routing } from "@/i18n/routing";
+import { getSeoSettings } from "@/lib/seoSettings";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AnalyticsNotice from "@/components/AnalyticsNotice";
@@ -32,6 +33,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const isArabic = locale === "ar";
+  const settings = await getSeoSettings();
 
   return {
     metadataBase: new URL(siteUrl),
@@ -42,6 +44,19 @@ export async function generateMetadata({
     description: isArabic
       ? "مراجعات صادقة وعملية للفنادق والمنتجات."
       : "Honest, hands-on reviews of hotels and products.",
+    ...(settings.googleSiteVerification || settings.bingSiteVerification
+      ? {
+          verification: {
+            ...(settings.googleSiteVerification ? { google: settings.googleSiteVerification } : {}),
+            ...(settings.bingSiteVerification
+              ? { other: { "msvalidate.01": settings.bingSiteVerification } }
+              : {}),
+          },
+        }
+      : {}),
+    ...(settings.defaultSocialImage
+      ? { openGraph: { images: [settings.defaultSocialImage] } }
+      : {}),
   };
 }
 

@@ -39,6 +39,9 @@ export default async function ProtectedAdminLayout({
               >
                 Monitoring
               </Link>
+              <Link href={adminHref("/seo")} className="text-foreground/70 hover:text-foreground">
+                SEO
+              </Link>
             </nav>
           </div>
           <form method="POST" action="/api/admin/logout">
