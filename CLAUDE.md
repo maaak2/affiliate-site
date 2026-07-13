@@ -45,3 +45,8 @@ Simple form-based admin panel (no code editing required) to add/edit items and c
 - The item schema fields (category, links, media, price) are interrelated — when changing one, check whether the admin form, display templates, and structured data (JSON-LD) all need updating together, not piecemeal.
 - Mobile-responsive design required.
 - Site should scale cleanly as more categories and items are added over time.
+
+## Working autonomy
+- Don't pause to ask yes/no confirmation questions ("Do you want to proceed?") for routine, non-destructive steps — just proceed on your own judgment instead of waiting for a response.
+- Still pause and ask before anything genuinely destructive or hard to undo — e.g. deleting production data, force-pushing, disabling a security control, permanently deleting files. Those keep waiting for explicit confirmation.
+- Everything else: go ahead without waiting.
