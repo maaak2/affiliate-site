@@ -25,18 +25,18 @@ export async function GET() {
     `Languages: ${languages}. Content type: product/service/hotel reviews with ratings, pros/cons, and affiliate purchase links.`,
     "",
     "## Main pages",
-    `- [Latest reviews](${siteUrl}/en): all reviews, newest first.`,
-    `- [Categories](${siteUrl}/en/categories): browse reviews by category.`,
-    `- [About](${siteUrl}/en/about): who runs this site.`,
+    `- [Latest reviews](${siteUrl}/ar): all reviews, newest first (also available at /en).`,
+    `- [Categories](${siteUrl}/ar/categories): browse reviews by category.`,
+    `- [About](${siteUrl}/ar/about): who runs this site.`,
     "",
     "## Categories",
     ...categories.map(
-      (category) => `- [${getCategoryName(category, "en")}](${siteUrl}/en/categories/${category.slug})`
+      (category) => `- [${getCategoryName(category, "ar")}](${siteUrl}/ar/categories/${category.slug})`
     ),
     "",
     "## Policies",
-    `- [Privacy policy](${siteUrl}/en/privacy)`,
-    `- [Affiliate disclosure](${siteUrl}/en/affiliate-disclosure)`,
+    `- [Privacy policy](${siteUrl}/ar/privacy)`,
+    `- [Affiliate disclosure](${siteUrl}/ar/affiliate-disclosure)`,
   ];
 
   return new NextResponse(lines.join("\n") + "\n", {
