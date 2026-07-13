@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listReviews } from "@/lib/reviews";
 import { listCategories, getCategoryName } from "@/lib/categories";
 import DeleteButton from "@/components/admin/DeleteButton";
+import PublishToggle from "@/components/admin/PublishToggle";
 import { adminHref } from "@/lib/adminPath";
 
 export default async function AdminHomePage() {
@@ -32,7 +33,8 @@ export default async function AdminHomePage() {
               <th className="py-2">Category</th>
               <th className="py-2">Rating</th>
               <th className="py-2">Price</th>
-              <th className="py-2">Published</th>
+              <th className="py-2">Published on</th>
+              <th className="py-2">Status</th>
               <th className="py-2"></th>
             </tr>
           </thead>
@@ -40,8 +42,20 @@ export default async function AdminHomePage() {
             {reviews.map((review) => {
               const category = categoryMap.get(review.categorySlug);
               return (
-                <tr key={review.slug} className="border-b border-black/10 last:border-0">
-                  <td className="py-2">{review.translations.en.title}</td>
+                <tr
+                  key={review.slug}
+                  className={`border-b border-black/10 last:border-0 ${
+                    review.published ? "" : "bg-black/[0.03] dark:bg-white/[0.03]"
+                  }`}
+                >
+                  <td className="py-2">
+                    {review.translations.en.title}
+                    {!review.published && (
+                      <span className="ms-2 rounded bg-foreground/10 px-1.5 py-0.5 text-xs text-foreground/60">
+                        Hidden
+                      </span>
+                    )}
+                  </td>
                   <td className="py-2">
                     {category ? getCategoryName(category, "en") : review.categorySlug}
                   </td>
@@ -50,6 +64,9 @@ export default async function AdminHomePage() {
                     {review.price.amount} {review.price.currency}
                   </td>
                   <td className="py-2">{review.publishedAt}</td>
+                  <td className="py-2">
+                    <PublishToggle slug={review.slug} published={review.published} />
+                  </td>
                   <td className="py-2 text-right space-x-3">
                     <Link
                       href={adminHref(`/${review.slug}/edit`)}

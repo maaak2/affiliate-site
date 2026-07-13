@@ -47,7 +47,7 @@ export default async function CategoryPage({
   const category = await getCategory(categorySlug);
   if (!category) notFound();
 
-  const reviews = await listReviewsByCategory(categorySlug);
+  const reviews = await listReviewsByCategory(categorySlug, { publishedOnly: true });
   const t = await getTranslations("home");
   const categoryName = getCategoryName(category, locale as Locale);
 

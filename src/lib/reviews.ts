@@ -53,6 +53,8 @@ export interface Review {
   categorySlug: string;
   /** Tag slugs — see lib/tags.ts. Independent from category. */
   tags: string[];
+  /** Unpublished reviews are hidden from the public site but stay visible/editable in admin. */
+  published: boolean;
   rating: number;
   price: Price;
   promoCode?: string;
@@ -112,11 +114,12 @@ function normalizeSeo(seo: Partial<ReviewSeo> | undefined): ReviewSeo {
   };
 }
 
-/** Fills in missing tags/seo fields on reviews written before those fields existed. */
+/** Fills in missing tags/seo/published fields on reviews written before those fields existed. */
 function withNewFieldDefaults(review: Review): Review {
   return {
     ...review,
     tags: Array.isArray(review.tags) ? review.tags : [],
+    published: review.published ?? true,
     seo: normalizeSeo(review.seo),
   };
 }
@@ -190,6 +193,7 @@ async function normalizeAndValidateReview(input: Partial<Review>): Promise<Revie
     slug: input.slug,
     categorySlug: category.slug,
     tags: tagSlugs,
+    published: input.published ?? true,
     rating,
     price: { amount, currency },
     promoCode: input.promoCode?.trim() || undefined,
@@ -213,21 +217,30 @@ export async function getAllSlugs(): Promise<string[]> {
     .map((key) => key.replace(/\.json$/, ""));
 }
 
-export async function listReviews(): Promise<Review[]> {
+/** Defaults to including unpublished (draft) reviews — the admin views need to see everything.
+ * Public-facing pages must explicitly opt in with `{ publishedOnly: true }`. */
+export async function listReviews(options?: { publishedOnly?: boolean }): Promise<Review[]> {
   const slugs = await getAllSlugs();
   const reviews = await Promise.all(slugs.map((slug) => getReview(slug)));
-  return reviews
+  const all = reviews
     .filter((review): review is Review => review !== null)
     .sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
+  return options?.publishedOnly ? all.filter((review) => review.published) : all;
 }
 
-export async function listReviewsByCategory(categorySlug: string): Promise<Review[]> {
-  const reviews = await listReviews();
+export async function listReviewsByCategory(
+  categorySlug: string,
+  options?: { publishedOnly?: boolean }
+): Promise<Review[]> {
+  const reviews = await listReviews(options);
   return reviews.filter((review) => review.categorySlug === categorySlug);
 }
 
-export async function listReviewsByTag(tagSlug: string): Promise<Review[]> {
-  const reviews = await listReviews();
+export async function listReviewsByTag(
+  tagSlug: string,
+  options?: { publishedOnly?: boolean }
+): Promise<Review[]> {
+  const reviews = await listReviews(options);
   return reviews.filter((review) => review.tags.includes(tagSlug));
 }
 
@@ -279,4 +292,20 @@ export async function deleteReview(slug: string): Promise<void> {
   const store = getContentStore();
   // Netlify Blobs' delete() is already idempotent — a no-op if the key doesn't exist.
   await store.delete(reviewKeyForSlug(slug));
+}
+
+/** Flips just the published flag — a dedicated, lightweight path for the admin list's quick
+ * toggle, independent from the full edit-form validation in updateReview. */
+export async function setReviewPublished(slug: string, published: boolean): Promise<Review> {
+  if (!isValidSlug(slug)) {
+    throw new Error("Invalid slug.");
+  }
+  const review = await getReview(slug);
+  if (!review) {
+    throw new Error(`No review found with slug "${slug}".`);
+  }
+  const updated: Review = { ...review, published };
+  const store = getContentStore();
+  await store.setJSON(reviewKeyForSlug(slug), updated);
+  return updated;
 }

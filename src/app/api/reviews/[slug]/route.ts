@@ -9,7 +9,9 @@ export async function GET(
 ) {
   const { slug } = await params;
   const review = await getReview(slug);
-  if (!review) {
+  // This endpoint has no auth check, so it must respect published state the same way the
+  // public pages do — admins load review data server-side directly, not through this route.
+  if (!review || (!review.published && !(await isAdminRequest()))) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   return NextResponse.json(review);

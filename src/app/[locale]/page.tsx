@@ -39,7 +39,10 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   const t = await getTranslations("home");
-  const [reviews, categories] = await Promise.all([listReviews(), listCategories()]);
+  const [reviews, categories] = await Promise.all([
+    listReviews({ publishedOnly: true }),
+    listCategories(),
+  ]);
   const categoryMap = new Map(categories.map((category) => [category.slug, category]));
 
   return (

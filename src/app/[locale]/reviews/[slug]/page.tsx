@@ -19,7 +19,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params;
   const review = await getReview(slug);
-  if (!review) return {};
+  if (!review || !review.published) return {};
 
   const translation =
     review.translations[locale as Locale] ?? review.translations.en;
@@ -75,7 +75,7 @@ export default async function ReviewPage({
 }) {
   const { locale, slug } = await params;
   const review = await getReview(slug);
-  if (!review) notFound();
+  if (!review || !review.published) notFound();
 
   const category = await getCategory(review.categorySlug);
   const allTags = await listTags();

@@ -30,7 +30,7 @@ export default async function TagPage({
   if (!tag) notFound();
 
   const [reviews, categories] = await Promise.all([
-    listReviewsByTag(tagSlug),
+    listReviewsByTag(tagSlug, { publishedOnly: true }),
     listCategories(),
   ]);
   const categoryMap = new Map(categories.map((category) => [category.slug, category]));

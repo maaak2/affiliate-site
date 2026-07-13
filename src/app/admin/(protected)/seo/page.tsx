@@ -20,6 +20,7 @@ export default async function AdminSeoPage({
     listCategories(),
     listTags(),
   ]);
+  const publishedCount = reviews.filter((review) => review.published).length;
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const selectedSlug = slug || reviews[0]?.slug;
@@ -56,10 +57,14 @@ export default async function AdminSeoPage({
           </a>
         </p>
         <p className="mt-2 text-sm text-foreground/60">
-          Updates automatically — currently lists {reviews.length} review
-          {reviews.length === 1 ? "" : "s"}, {categories.length} categor
-          {categories.length === 1 ? "y" : "ies"}, and {tags.length} tag
-          {tags.length === 1 ? "" : "s"}, across both languages. No rebuild or manual step is
+          Updates automatically — currently lists {publishedCount} published review
+          {publishedCount === 1 ? "" : "s"}
+          {reviews.length !== publishedCount &&
+            ` (${reviews.length - publishedCount} hidden review${
+              reviews.length - publishedCount === 1 ? "" : "s"
+            } excluded)`}
+          , {categories.length} categor{categories.length === 1 ? "y" : "ies"}, and {tags.length}{" "}
+          tag{tags.length === 1 ? "" : "s"}, across both languages. No rebuild or manual step is
           needed when you add, edit, or remove content.
         </p>
       </section>
@@ -83,6 +88,7 @@ export default async function AdminSeoPage({
                   {reviews.map((review) => (
                     <option key={review.slug} value={review.slug}>
                       {review.translations.en.title}
+                      {!review.published ? " (Hidden)" : ""}
                     </option>
                   ))}
                 </select>

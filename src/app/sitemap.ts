@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { getPathname } from "@/i18n/navigation";
-import { getAllSlugs } from "@/lib/reviews";
+import { listReviews } from "@/lib/reviews";
 import { listCategories } from "@/lib/categories";
 import { listTags } from "@/lib/tags";
 
@@ -11,8 +11,8 @@ export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const [slugs, categories, tags] = await Promise.all([
-    getAllSlugs(),
+  const [reviews, categories, tags] = await Promise.all([
+    listReviews({ publishedOnly: true }),
     listCategories(),
     listTags(),
   ]);
@@ -23,7 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/about",
     "/privacy",
     "/affiliate-disclosure",
-    ...slugs.map((slug) => `/reviews/${slug}`),
+    ...reviews.map((review) => `/reviews/${review.slug}`),
     ...categories.map((category) => `/categories/${category.slug}`),
     ...tags.map((tag) => `/tags/${tag.slug}`),
   ];

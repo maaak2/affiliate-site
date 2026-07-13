@@ -25,6 +25,7 @@ type FormState = {
   slug: string;
   categorySlug: string;
   tagSlugs: string[];
+  published: boolean;
   rating: string;
   priceAmount: string;
   priceCurrency: Currency;
@@ -73,6 +74,7 @@ function reviewToFormState(review: Review | undefined, defaultCategorySlug: stri
     slug: review?.slug ?? "",
     categorySlug: review?.categorySlug ?? defaultCategorySlug,
     tagSlugs: review?.tags ?? [],
+    published: review?.published ?? true,
     rating: review ? String(review.rating) : "4.5",
     priceAmount: review ? String(review.price.amount) : "",
     priceCurrency: review?.price.currency ?? "SAR",
@@ -226,6 +228,7 @@ export default function ReviewForm({
       slug: form.slug,
       categorySlug: form.categorySlug,
       tags: form.tagSlugs,
+      published: form.published,
       rating: Number(form.rating),
       price: { amount: Number(form.priceAmount), currency: form.priceCurrency },
       promoCode: form.promoCode.trim() || undefined,
@@ -297,6 +300,15 @@ export default function ReviewForm({
       {error && (
         <p className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
       )}
+
+      <label className="flex items-center gap-2 text-sm font-medium">
+        <input
+          type="checkbox"
+          checked={form.published}
+          onChange={(e) => updateField("published", e.target.checked)}
+        />
+        Published (visible on the public site)
+      </label>
 
       <section className="grid gap-4 sm:grid-cols-2">
         <div>
